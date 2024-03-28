@@ -151,8 +151,9 @@ USE_TZ = True
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://cvsite-pi.vercel.app/",
+    'https://cvsite-pi.vercel.app',
 ]
+
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
