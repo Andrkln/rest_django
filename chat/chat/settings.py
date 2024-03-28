@@ -97,8 +97,7 @@ if IS_AWS_ENVIRONMENT:
     AWS_DEFAULT_ACL = 'public-read'
     AWS_LOCATION = 'converation'
     ALLOWED_HOSTS = ['3.92.217.119',
-    'https://cvsite-pi.vercel.app/',
-    '127.0.0.1',]
+    'https://cvsite-pi.vercel.app/']
 
 else:
     ALLOWED_HOSTS = []
