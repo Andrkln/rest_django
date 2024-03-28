@@ -51,9 +51,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000/",
-]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -98,7 +95,10 @@ if IS_AWS_ENVIRONMENT:
     AWS_REGION = config('AWS_REGION')
     AWS_DEFAULT_ACL = 'public-read'
     AWS_LOCATION = 'converation'
-    ALLOWED_HOSTS = ['*']
+    ALLOWED_HOSTS = [
+    '3.92.217.119',
+    'cvsite-pi.vercel.app',
+]
 
 
 else:
@@ -109,6 +109,10 @@ else:
             "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
+
+print('\n\n\n\n\n\n\n\n\n')
+print(ALLOWED_HOSTS)
+print('\n\n\n\n\n\n\n\n\n')
 
 
 # Password validation
