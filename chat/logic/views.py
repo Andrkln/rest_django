@@ -13,9 +13,6 @@ from decouple import config
 
 class ChatBotView(APIView):
     def post(self, request, *args, **kwargs):
-        print('\n\n\n\n\n\n\nn\n\n\n\n\n\n\n\n\n\n')
-        print('2')
-        print('\n\n\n\n\n\n\nn\n\n\n\n\n\n\n\n\n\n')
         chat_id = request.data.get('chat_id')
         user_question_text = request.data.get('message')
         rest_key =  request.data.get('rest')
