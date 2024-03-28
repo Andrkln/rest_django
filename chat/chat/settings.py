@@ -81,35 +81,22 @@ WSGI_APPLICATION = 'chat.wsgi.application'
 
 DEBUG = True
 
-IS_AWS_ENVIRONMENT = 'AWS_ACCESS_KEY_ID' in os.environ
-
-if IS_AWS_ENVIRONMENT:
-    DATABASES = {
-        "default": dj_database_url.config(default=config('DATABASE_URL'))
-    }
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
-    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-    AWS_S3_ADDRESSING_STYLE = config('AWS_S3_ADDRESSING_STYLE')
-    AWS_REGION = config('AWS_REGION')
-    AWS_DEFAULT_ACL = 'public-read'
-    AWS_LOCATION = 'converation'
-    ALLOWED_HOSTS = [
-    '3.92.217.119',
-    'cvsite-pi.vercel.app',
-    '3.92.217.119:8000'
+DATABASES = {
+    "default": dj_database_url.config(default=config('DATABASE_URL'))
+}
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_S3_ADDRESSING_STYLE = config('AWS_S3_ADDRESSING_STYLE')
+AWS_REGION = config('AWS_REGION')
+AWS_DEFAULT_ACL = 'public-read'
+AWS_LOCATION = 'converation'
+ALLOWED_HOSTS = [
+'3.92.217.119',
+'cvsite-pi.vercel.app',
+'3.92.217.119:8000'
 ]
-
-
-else:
-    ALLOWED_HOSTS = []
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-        }
-    }
 
 print('\n\n\n\n\n\n\n\n\n')
 print(ALLOWED_HOSTS)
