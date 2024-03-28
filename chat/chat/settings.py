@@ -98,10 +98,6 @@ ALLOWED_HOSTS = [
 '3.92.217.119:8000'
 ]
 
-print('\n\n\n\n\n\n\n\n\n')
-print(ALLOWED_HOSTS)
-print('\n\n\n\n\n\n\n\n\n')
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
