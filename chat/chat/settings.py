@@ -84,6 +84,8 @@ WSGI_APPLICATION = 'chat.wsgi.application'
 
 DEBUG = True
 
+IS_AWS_ENVIRONMENT = 'AWS_ACCESS_KEY_ID' in os.environ
+
 if IS_AWS_ENVIRONMENT:
     DATABASES = {
         "default": dj_database_url.config(default=config('DATABASE_URL'))
