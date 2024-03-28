@@ -100,7 +100,8 @@ if IS_AWS_ENVIRONMENT:
     AWS_LOCATION = 'converation'
     ALLOWED_HOSTS = ['https://3.92.217.119',
     'https://cvsite-pi.vercel.app/',
-    'http://3.92.217.119']
+    'http://3.92.217.119',
+    '3.92.217.119']
 
 else:
     ALLOWED_HOSTS = []
