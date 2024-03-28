@@ -12,9 +12,6 @@ from decouple import config
 
 
 class ChatBotView(APIView):
-    print('\n\n\n\n\n\n\nn\n\n\n\n\n\n\n\n\n\n')
-    print('1')
-    print('\n\n\n\n\n\n\nn\n\n\n\n\n\n\n\n\n\n')
     def post(self, request, *args, **kwargs):
         print('\n\n\n\n\n\n\nn\n\n\n\n\n\n\n\n\n\n')
         print('2')
@@ -22,8 +19,6 @@ class ChatBotView(APIView):
         chat_id = request.data.get('chat_id')
         user_question_text = request.data.get('message')
         rest_key =  request.data.get('rest')
-        print(rest_key, key)
-        print('\n\n\n\n\n\n\nn\n\n\n\n\n\n\n\n\n\n')
         key = config('MY_KEY')
         if rest_key == key:
             user_question = [
