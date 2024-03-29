@@ -27,7 +27,7 @@ add_func_properties = {
         },
         "email_of_customer": {
             "type": "string",
-            "description":f"email of user, e.g example@gmail.com and not {str(config('email'))}"
+            "description":f"email of user, e.g example@gmail.com"
         }
     },
     "required": ["name", 'message', "email_of_customer"]
@@ -48,6 +48,10 @@ def generate_response(user_question, prev_question=None):
 
     messages = []
 
+    messages.append(
+            {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous. Ensure to validate user inputs for names and email addresses before proceeding. Specifically, names should be validated to ensure they are conventional human names and not other nouns or phrases. If the input is ambiguous or does not meet the criteria, prompt the user for clarification. Validate the sender's name to ensure it is a normal human name. If the name is not a normal human name (e.g., a fruit, vegetable, animal, object or non-name term), request changing to normal human name from the user, until he provides it.Confirm that the recipient's email address is in a valid email format, not exaple@ or fake@. If not, ask the user to provide a valid email address."}
+            )
+
     if not prev_question:
         messages.append(
                 {
@@ -55,7 +59,6 @@ def generate_response(user_question, prev_question=None):
                     "content": initial_role,
                 }
             )
-
     else:
         messages.extend(
             prev_question

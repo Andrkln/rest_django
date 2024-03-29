@@ -21,9 +21,12 @@ def send_emails(name, message, email_of_customer):
     email_to_customer = EmailMultiAlternatives(subject_customer, text_content, from_email, customer_email)
     email_to_customer.attach_alternative(html_content, "text/html")
 
-    mails = ['example@gmail.com', {str(config('email'))}, f'{name}example@gmail.com']
+    mails = ['example@gmail.com', {str(config('email'))}, f'{name}example@gmail.com',
+    'example@mail.ru'
+    ]
     names = [
-        'User', 'user', 'Unknown', 'unknown', 'No name', 'no name', 'Noname', 'noname' 
+        'User', 'user', 'Unknown', 'unknown', 'No name', 'no name', 'Noname', 'noname',
+        'No'
     ]
 
 
@@ -33,6 +36,6 @@ def send_emails(name, message, email_of_customer):
             send_mail(subject_technical, technical_message, from_email, technical_email)
             return 'Email sent successfully'
         else:
-            return 'need more data'
+            return 'need more is not correct'
     except Exception as e:
         return 'Sorry, something went wrong with sending the HTML email to the customer.'
