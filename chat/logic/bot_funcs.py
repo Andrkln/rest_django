@@ -1,14 +1,15 @@
 from django.core.mail import EmailMultiAlternatives, send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-import os
+from decouple import config
 
 
 def send_emails(name, message, email_of_customer):
     subject_technical = 'Programming Order Alert'
     subject_customer = 'Your Order Confirmation'
-    from_email = {str(os.getenv('email'))}
-    technical_email = [{str(os.getenv('email'))}]
+    email = config('email')
+    from_email = {email}
+    technical_email = [email]
     customer_email = [email_of_customer]
     
     technical_message = f'New programming order received from {name}, email {email_of_customer}. Message: {message}'
@@ -20,10 +21,9 @@ def send_emails(name, message, email_of_customer):
     email_to_customer = EmailMultiAlternatives(subject_customer, text_content, from_email, customer_email)
     email_to_customer.attach_alternative(html_content, "text/html")
 
-    mails = ['example@gmail.com', {str(os.getenv('email'))}, f'{name}example@gmail.com']
+    mails = ['example@gmail.com', {str(config('email'))}, f'{name}example@gmail.com']
     names = [
-        'User', 'user', 'Unknown', 'unknown', 'No name', 'no name', 'Noname', 'noname'
-        
+        'User', 'user', 'Unknown', 'unknown', 'No name', 'no name', 'Noname', 'noname' 
     ]
 
 
