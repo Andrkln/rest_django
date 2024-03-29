@@ -85,7 +85,6 @@ ALLOWED_HOSTS = [
 '3.92.217.119',
 'cvsite-pi.vercel.app',
 '3.92.217.119:8000',
-'*'
 ]
 
 DATABASES = {
