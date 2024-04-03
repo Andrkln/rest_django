@@ -8,79 +8,90 @@ from .generate_response import generate_response, initial_role
 import json
 from django.shortcuts import get_object_or_404
 from decouple import config
-
+from django.http import StreamingHttpResponse
+import time
 
 
 class ChatBotView(APIView):
     def post(self, request, *args, **kwargs):
         chat_id = request.data.get('chat_id')
         user_question_text = request.data.get('message')
-        rest_key =  request.data.get('rest')
+        rest_key = request.data.get('rest')
         key = config('MY_KEY')
+        
+
         if rest_key == key:
+            
             user_question = [
 
-                    {"role": "user", "content": f'question "{user_question_text}"'}
+            {"role": "user", "content": f'question "{user_question_text}"'}
 
                 ]
 
             if chat_id is None:
-                answer = generate_response(user_question=user_question_text)
+                response_chunks = generate_response(user_question=user_question_text)
 
-                reply_history = [
+                def chunk_generator(response_chunks):
+                    chunks = ''
+                    
+                    conversation = Conversation.objects.create(
+                    )
 
-                    {"role": "assistant", "content": initial_role},
-                    {"role": "assistant", "content": answer},
+                    chat_id_to_send = str(conversation.chat_id)
 
-                ]
+                    yield json.dumps({'chat_id': chat_id_to_send}) + '\n'
 
-                conversation = Conversation.objects.create(
-                    user_input=json.dumps(user_question),
-                    response=json.dumps(reply_history),
-                )
-                
-                return Response(
-                    {
-                        "chat_id": str(conversation.chat_id),
-                        "latest_response": answer
-                    }
-                )
+                    for chunk in response_chunks:
+                        time.sleep(1)
+                        chunks += chunk
+                        yield json.dumps({'message': chunk}) + '\n'
+
+                    reply = [
+                        {"role": "assistant", "content": initial_role},
+                        {"role": "assistant", "content": chunks},
+
+                        ]
+
+                    conversation.user_input = json.dumps(user_question)
+                    conversation.response = json.dumps(reply)
+
+                    conversation.save()
+
+                streaming_response = StreamingHttpResponse(chunk_generator(response_chunks), content_type='application/json')
+
+                return streaming_response
 
             else:
                 conversation = get_object_or_404(Conversation, chat_id=chat_id)
-
-                prev_questions = json.loads(conversation.user_input)
-                prev_responses = json.loads(conversation.response)
-                
+                prev_questions = conversation.user_input
+                prev_responses = conversation.response
                 conversation_history = prev_responses + prev_questions
-                
-                new_answer = generate_response(user_question_text, conversation_history)
+                response_chunks = generate_response(
 
+                user_question=user_question_text, 
 
-                conversation.user_input = json.dumps(
-                    prev_questions + 
-                        [
-                            {"role": "user", "content": user_question_text}
-                        ]
-                    )
-                conversation.response = json.dumps(
-                    prev_responses + 
-                        [ 
-                            {
-                            "role": "assistant", "content": new_answer
-                            }
-                        ]
-                    )
-                conversation.save()
-                
-                return Response(
-                    {
-                        "latest_response": new_answer,
-                    }
                 )
 
+                def chunk_generator1(response_chunks):
+                    conversation.user_input += json.dumps(user_question)
+                    chunks = ''
 
-        return Response({"error": "access denied"}, status=404)
+                    for chunk in response_chunks:
+                        chunks += chunk
+                        time.sleep(1)
+                        yield json.dumps({'message': chunk}) + '\n'
+                    
+                    reply = [
 
+                        {"role": "assistant", "content": chunks},
 
+                        ]
+                    conversation.response += json.dumps(reply)
+                    conversation.save()
 
+                streaming_response = StreamingHttpResponse(chunk_generator1(response_chunks), 
+                content_type='application/json')
+
+                return streaming_response
+
+        return Response({"error": "Access denied"}, status=404)
