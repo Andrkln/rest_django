@@ -3,6 +3,7 @@ from typing import Literal
 from .bot_funcs import send_emails
 import json
 from decouple import config
+import openai
 
 initial_role = f"""
 {config('initial_role')}
@@ -65,6 +66,12 @@ def generate_response(user_question, prev_question=None):
     messages.append({"role": "user", "content": user_question})
 
     try:
+
+        tool_call_details = {
+            "name": None,
+            "arguments": ""
+        }
+
         response = client.chat.completions.create(
             model="gpt-3.5-turbo-1106",
             messages=messages,
@@ -73,19 +80,56 @@ def generate_response(user_question, prev_question=None):
             stream=True
         )
 
-        tool_calls = None
+        response_message = 'response is'
 
-        if tool_calls:
+        message_id = None
+
+        for chunk in response:
+
+            if chunk.choices[0].delta.content is not None:
+
+                    response_message += chunk.choices[0].delta.content
+
+            if chunk.choices[0].delta.tool_calls:
+
+                for tool_call in chunk.choices[0].delta.tool_calls:
+
+                    if message_id is None and tool_call.id:
+                        message_id = tool_call.id
+
+                    if tool_call.function.name is not None:
+
+                        tool_call_details["name"] = tool_call.function.name
+
+                tool_call_details["arguments"] += tool_call.function.arguments
+
+        
+        if tool_call_details["name"] is not None:
+            
             available_functions = {
                 "send_emails": send_emails,
             }
 
-            messages.append(response_message)
+            response_messages = {
+                    "content": response_message,
+                    "role": "assistant",
+                    "tool_calls": [{
+                        "id": message_id,
+                        "tool_call_id": message_id,
+                        "function": {
+                            "arguments": tool_call_details["arguments"],
+                            "name": tool_call_details["name"]
+                        },
+                        "type": "function"
+                    }]
+                }
+                
+            messages.append(response_messages)
 
-            for tool_call in tool_calls:
-                function_name = tool_call.function.name
+            for tool_call in tool_call_details:
+                function_name = tool_call_details["name"]
                 function_to_call = available_functions[function_name]
-                function_args = json.loads(tool_call.function.arguments)
+                function_args = json.loads(tool_call_details["arguments"])
                 if function_name == "send_emails":
                     function_response = function_to_call(
                         name=function_args.get("name"),
@@ -95,12 +139,13 @@ def generate_response(user_question, prev_question=None):
 
             messages.append(
                 {
-                    "tool_call_id": tool_call.id,
                     "role": "tool",
                     "name": function_name,
+                    'tool_call_id': message_id,
                     "content": f'the response:{function_response}',
                 }
             )
+
 
             follow_up_response = client.chat.completions.create(
                 model="gpt-3.5-turbo-1106",
@@ -108,13 +153,15 @@ def generate_response(user_question, prev_question=None):
                 stream=True
             )
 
+
             for chunk in follow_up_response:
                 if chunk.choices[0].delta.content is not None:
-                    yield chunk.choices[0].delta.content
+                    yield chunk
 
         for chunk in response:
+            print(chunk)
             if chunk.choices[0].delta.content is not None:
-                yield chunk.choices[0].delta.content
+                yield chunk
 
     except Exception as e:
         print(f"Error generating response: {e}")

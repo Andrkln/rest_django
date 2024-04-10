@@ -42,9 +42,10 @@ class ChatBotView(APIView):
                     yield json.dumps({'chat_id': chat_id_to_send}) + '\n'
 
                     for chunk in response_chunks:
-                        time.sleep(1)
-                        chunks += chunk
-                        yield json.dumps({'message': chunk}) + '\n'
+                        print(f'\n\n\n{chunk}\n\n\n\n\\n')
+                        chunks += chunk.choices[0].delta.content
+                        message = str(chunk.choices[0].delta.content)
+                        yield json.dumps({'message': message, 'id': chunk.id}) + '\n'
 
                     reply = [
                         {"role": "assistant", "content": initial_role},
@@ -77,9 +78,9 @@ class ChatBotView(APIView):
                     chunks = ''
 
                     for chunk in response_chunks:
-                        chunks += chunk
-                        time.sleep(1)
-                        yield json.dumps({'message': chunk}) + '\n'
+                        chunks += chunk.choices[0].delta.content
+                        message = str(chunk.choices[0].delta.content)
+                        yield json.dumps({'message': message, 'id': chunk.id}) + '\n'
                     
                     reply = [
 
