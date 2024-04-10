@@ -42,7 +42,6 @@ class ChatBotView(APIView):
                     yield json.dumps({'chat_id': chat_id_to_send}) + '\n'
 
                     for chunk in response_chunks:
-                        print(f'\n\n\n{chunk}\n\n\n\n\\n')
                         chunks += chunk.choices[0].delta.content
                         message = str(chunk.choices[0].delta.content)
                         yield json.dumps({'message': message, 'id': chunk.id}) + '\n'
