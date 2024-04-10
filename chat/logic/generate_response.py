@@ -87,8 +87,10 @@ def generate_response(user_question, prev_question=None):
         for chunk in response:
 
             if chunk.choices[0].delta.content is not None:
+                
+                yield chunk
 
-                    response_message += chunk.choices[0].delta.content
+                response_message += chunk.choices[0].delta.content
 
             if chunk.choices[0].delta.tool_calls:
 
@@ -157,11 +159,6 @@ def generate_response(user_question, prev_question=None):
             for chunk in follow_up_response:
                 if chunk.choices[0].delta.content is not None:
                     yield chunk
-
-        for chunk in response:
-            print(chunk)
-            if chunk.choices[0].delta.content is not None:
-                yield chunk
 
     except Exception as e:
         print(f"Error generating response: {e}")
