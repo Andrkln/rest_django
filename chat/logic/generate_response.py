@@ -35,8 +35,7 @@ add_func_properties = {
 }
 
 
-def generate_response(user_question, prev_question=None):
-    tools = [
+tools = [
         {
             "type": "function",
             "function": {
@@ -47,11 +46,14 @@ def generate_response(user_question, prev_question=None):
         },
     ]
 
+start_sys_message = "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous. Ensure to validate user inputs for names and email addresses before proceeding. Specifically, names should be validated to ensure they are conventional human names and not other nouns or phrases. If the input is ambiguous or does not meet the criteria, prompt the user for clarification. Validate the sender's name to ensure it is a normal  name. If the name is not a normal name (e.g., a fruit, vegetable, animal, object or non-name term), request changing to normal human name from the user, until he provides it.Confirm that the recipient's email address is in a valid email format, not exaple@ or fake@. If not, ask the user to provide a valid email address. Tell about fields just like name, email, and message, tell about restrictions only if inacceptable data for the fields provided"
+
+def generate_response(user_question, prev_question=None):
+
     messages = []
 
     messages.append(
-        {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous. Ensure to validate user inputs for names and email addresses before proceeding. Specifically, names should be validated to ensure they are conventional human names and not other nouns or phrases. If the input is ambiguous or does not meet the criteria, prompt the user for clarification. Validate the sender's name to ensure it is a normal  name. If the name is not a normal name (e.g., a fruit, vegetable, animal, object or non-name term), request changing to normal human name from the user, until he provides it.Confirm that the recipient's email address is in a valid email format, not exaple@ or fake@. If not, ask the user to provide a valid email address. Tell about fields just like name, email, and message, tell about restrictions only if inacceptable data for the fields provided"}
-    )
+        {"role": "system", "content": start_sys_message} )
 
     if not prev_question:
         messages.append(
@@ -128,16 +130,16 @@ def generate_response(user_question, prev_question=None):
                 
             messages.append(response_messages)
 
-            for tool_call in tool_call_details:
-                function_name = tool_call_details["name"]
-                function_to_call = available_functions[function_name]
-                function_args = json.loads(tool_call_details["arguments"])
-                if function_name == "send_emails":
-                    function_response = function_to_call(
-                        name=function_args.get("name"),
-                        message=function_args.get("message"),
-                        email_of_customer=function_args.get("email_of_customer")
-                    )
+            function_name = tool_call_details["name"]
+            function_to_call = available_functions[function_name]
+            function_args = json.loads(tool_call_details["arguments"])
+            
+            if function_name == "send_emails":
+                function_response = function_to_call(
+                    name=function_args.get("name"),
+                    message=function_args.get("message"),
+                    email_of_customer=function_args.get("email_of_customer")
+                )
 
             messages.append(
                 {

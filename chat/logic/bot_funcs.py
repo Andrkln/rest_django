@@ -5,7 +5,6 @@ from decouple import config
 import threading
 
 
-
 def send_customer_email(subject_customer, text_content, from_email, customer_email, html_content):
     email_to_customer = EmailMultiAlternatives(subject_customer, text_content, from_email, customer_email)
     email_to_customer.attach_alternative(html_content, "text/html")
@@ -52,8 +51,8 @@ def send_emails(name, message, email_of_customer):
 
     try:
         if name not in names and customer_email not in mails:
-            tread_email_to_me.start()
             thread_email_to_customer.start()
+            tread_email_to_me.start()
             tread_email_to_me.join()
             thread_email_to_customer.join()
             return 'Email sent successfully'
