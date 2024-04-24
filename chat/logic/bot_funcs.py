@@ -3,6 +3,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from decouple import config
 import threading
+from .telegram_bot import telegram_message
 
 
 def send_customer_email(subject_customer, text_content, from_email, customer_email, html_content):
@@ -27,6 +28,7 @@ def send_emails(name, message, email_of_customer):
     html_content = render_to_string('html/sent.html', context)
     text_content = strip_tags(html_content)
 
+    
 
     thread_email_to_customer = threading.Thread(
         target=send_customer_email,
@@ -55,6 +57,7 @@ def send_emails(name, message, email_of_customer):
             tread_email_to_me.start()
             tread_email_to_me.join()
             thread_email_to_customer.join()
+            telegram_message(name, message, email_of_customer)
             return 'Email sent successfully'
         else:
             return 'need more is not correct'
