@@ -82,12 +82,12 @@ WSGI_APPLICATION = 'chat.wsgi.application'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-'3.92.217.119',
-'cvsite-pi.vercel.app',
-'3.92.217.119:8000',
-'127.0.0.1',
-'127.0.0.1:8000',
+    '3.92.217.119',
+    'cvsite-pi.vercel.app',
+    '127.0.0.1',
+    'restgpt-cfbbd06a935f.herokuapp.com'
 ]
+
 
 DATABASES = {
     'default': {
