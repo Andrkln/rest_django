@@ -27,3 +27,5 @@ dj-database-url==2.1.0
 psycopg2-binary==2.9.9
 pyTelegramBotAPI==4.11.0
 telebot==0.0.5
+gunicorn
+
