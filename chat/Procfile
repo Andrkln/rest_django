@@ -1,0 +1,1 @@
+web: chat.wsgi --log-file -
