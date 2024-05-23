@@ -85,7 +85,8 @@ ALLOWED_HOSTS = [
     '3.92.217.119',
     'cvsite-pi.vercel.app',
     '127.0.0.1',
-    'restgpt-cfbbd06a935f.herokuapp.com'
+    'restgpt-cfbbd06a935f.herokuapp.com',
+    '*'
 ]
 
 
@@ -139,6 +140,7 @@ USE_TZ = True
 
 CORS_ALLOWED_ORIGINS = [
     'https://cvsite-pi.vercel.app',
+    '*'
 ]
 
 
