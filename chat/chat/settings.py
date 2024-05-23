@@ -140,7 +140,6 @@ USE_TZ = True
 
 CORS_ALLOWED_ORIGINS = [
     'https://cvsite-pi.vercel.app',
-    '*'
 ]
 
 
