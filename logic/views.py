@@ -40,7 +40,7 @@ class ChatBotView(APIView):
                     for chunk in response_chunks:
                         if chunk.choices[0].delta.content:
                             chunks += chunk.choices[0].delta.content
-                            message = str(chunk.choices[0].delta.content)
+                            message = chunk.choices[0].delta.content
                             yield json.dumps({'message': message, 'id': chunk.id}) + '\n'
 
                     reply = [
