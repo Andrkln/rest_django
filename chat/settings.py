@@ -45,11 +45,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'logic',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -59,8 +57,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
-CORS_ALLOW_CREDENTIALS = True
 
 
 ROOT_URLCONF = 'chat.urls'
@@ -161,12 +157,6 @@ USE_TZ = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
-
-CORS_ALLOWED_ORIGINS = [
-    'https://cvsite-pi.vercel.app',
-]
-
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
