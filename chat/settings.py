@@ -45,9 +45,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'logic',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,6 +59,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+CORS_ALLOW_CREDENTIALS = True
 
 
 ROOT_URLCONF = 'chat.urls'
@@ -106,6 +110,7 @@ if IS_HEROKU_APP:
             conn_health_checks=True,
             ssl_require=True,
         ),
+        
     }
 else:
     # When running locally in development or in CI, a sqlite database file will be used instead
@@ -157,6 +162,14 @@ USE_TZ = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+
+
+CORS_ALLOWED_ORIGINS = [
+    'https://cvsite-pi.vercel.app',
+    'cvsite-pi.vercel.app'
+    'http://cvsite-pi.vercel.app'
+]
+
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
