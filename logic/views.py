@@ -11,6 +11,7 @@ from decouple import config
 from django.http import StreamingHttpResponse
 import time
 
+
 class ChatBotView(APIView):
     def post(self, request, *args, **kwargs):
         chat_id = request.data.get('chat_id')
@@ -18,38 +19,46 @@ class ChatBotView(APIView):
         rest_key = request.data.get('rest')
         key = config('MY_KEY')
         
+
         if rest_key == key:
+            
             user_question = [
-                {"role": "user", "content": f'question "{user_question_text}"'}
-            ]
+
+            {"role": "user", "content": f'question "{user_question_text}"'}
+
+                ]
 
             if chat_id is None:
                 response_chunks = generate_response(user_question=user_question_text)
 
                 def chunk_generator(response_chunks):
                     chunks = ''
-                    conversation = Conversation.objects.create()
+                    
+                    conversation = Conversation.objects.create(
+                    )
+
                     chat_id_to_send = str(conversation.chat_id)
 
-                    yield json.dumps({'chat_id': chat_id_to_send}) + '\n'
-                    time.sleep(0.01)  # Adding a small delay
+                    yield json.dumps({'chat_id': chat_id_to_send}) + '\n\n'
 
                     for chunk in response_chunks:
                         chunks += chunk.choices[0].delta.content
                         message = str(chunk.choices[0].delta.content)
-                        yield json.dumps({'message': message, 'id': chunk.id}) + '\n'
-                        time.sleep(0.01)  # Adding a small delay
+                        yield json.dumps({'message': message, 'id': chunk.id}) + '\n\n'
 
                     reply = [
                         {"role": "assistant", "content": initial_role},
                         {"role": "assistant", "content": chunks},
-                    ]
+
+                        ]
 
                     conversation.user_input = json.dumps(user_question)
                     conversation.response = json.dumps(reply)
+
                     conversation.save()
 
                 streaming_response = StreamingHttpResponse(chunk_generator(response_chunks), content_type='application/json')
+
                 return streaming_response
 
             else:
@@ -57,7 +66,11 @@ class ChatBotView(APIView):
                 prev_questions = conversation.user_input
                 prev_responses = conversation.response
                 conversation_history = prev_responses + prev_questions
-                response_chunks = generate_response(user_question=user_question_text)
+                response_chunks = generate_response(
+
+                user_question=user_question_text, 
+
+                )
 
                 def chunk_generator1(response_chunks):
                     conversation.user_input += json.dumps(user_question)
@@ -67,15 +80,18 @@ class ChatBotView(APIView):
                         chunks += chunk.choices[0].delta.content
                         message = str(chunk.choices[0].delta.content)
                         yield json.dumps({'message': message, 'id': chunk.id}) + '\n'
-                        time.sleep(0.01)  # Adding a small delay
                     
                     reply = [
+
                         {"role": "assistant", "content": chunks},
-                    ]
+
+                        ]
                     conversation.response += json.dumps(reply)
                     conversation.save()
 
-                streaming_response = StreamingHttpResponse(chunk_generator1(response_chunks), content_type='application/json')
+                streaming_response = StreamingHttpResponse(chunk_generator1(response_chunks), 
+                content_type='application/json')
+
                 return streaming_response
 
         return Response({"error": "Access denied"}, status=404)
