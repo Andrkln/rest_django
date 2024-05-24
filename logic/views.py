@@ -32,21 +32,30 @@ class ChatBotView(APIView):
                 response_chunks = generate_response(user_question=user_question_text)
 
                 def chunk_generator(response_chunks):
-                    buffer = ''
-                    conversation = Conversation.objects.create()
+                    chunks = ''
+                    
+                    conversation = Conversation.objects.create(
+                    )
+
                     chat_id_to_send = str(conversation.chat_id)
+
                     yield json.dumps({'chat_id': chat_id_to_send}) + '\n'
 
                     for chunk in response_chunks:
-                        buffer += chunk.choices[0].delta.content
-                        if buffer.endswith('\n'):
-                            message = buffer.strip()
-                            buffer = ''
-                            yield json.dumps({'message': message, 'id': chunk.id}) + '\n'
+                        chunks += chunk.choices[0].delta.content
+                        message = str(chunk.choices[0].delta.content)
+                        yield json.dumps({'message': message, 'id': chunk.id}) + '\n'
 
-                    if buffer:
-                        yield json.dumps({'message': buffer.strip()}) + '\n'
+                    reply = [
+                        {"role": "assistant", "content": initial_role},
+                        {"role": "assistant", "content": chunks},
 
+                        ]
+
+                    conversation.user_input = json.dumps(user_question)
+                    conversation.response = json.dumps(reply)
+
+                    conversation.save()
 
                 streaming_response = StreamingHttpResponse(chunk_generator(response_chunks), content_type='application/json')
 
@@ -68,18 +77,17 @@ class ChatBotView(APIView):
                     chunks = ''
 
                     for chunk in response_chunks:
-                        if chunk.choices[0].delta.content:
-                            chunks += chunk.choices[0].delta.content
-                            message = str(chunk.choices[0].delta.content)
-                            try:
-                                yield json.dumps({'message': message, 'id': chunk.id}) + '\n'
-                            except Exception as e:
-                                yield json.dumps({'error': str(e)}) + '\n'
+                        chunks += chunk.choices[0].delta.content
+                        message = str(chunk.choices[0].delta.content)
+                        yield json.dumps({'message': message, 'id': chunk.id}) + '\n'
+                    
+                    reply = [
 
-                    reply = [{"role": "assistant", "content": chunks}]
+                        {"role": "assistant", "content": chunks},
+
+                        ]
                     conversation.response += json.dumps(reply)
                     conversation.save()
-
 
                 streaming_response = StreamingHttpResponse(chunk_generator1(response_chunks), 
                 content_type='application/json')
