@@ -32,20 +32,20 @@ class ChatBotView(APIView):
                 response_chunks = generate_response(user_question=user_question_text)
 
                 def chunk_generator(response_chunks):
-                buffer = ''
-                conversation = Conversation.objects.create()
-                chat_id_to_send = str(conversation.chat_id)
-                yield json.dumps({'chat_id': chat_id_to_send}) + '\n'
+                    buffer = ''
+                    conversation = Conversation.objects.create()
+                    chat_id_to_send = str(conversation.chat_id)
+                    yield json.dumps({'chat_id': chat_id_to_send}) + '\n'
 
-                for chunk in response_chunks:
-                    buffer += chunk.choices[0].delta.content
-                    if buffer.endswith('\n'):
-                        message = buffer.strip()
-                        buffer = ''
-                        yield json.dumps({'message': message, 'id': chunk.id}) + '\n'
+                    for chunk in response_chunks:
+                        buffer += chunk.choices[0].delta.content
+                        if buffer.endswith('\n'):
+                            message = buffer.strip()
+                            buffer = ''
+                            yield json.dumps({'message': message, 'id': chunk.id}) + '\n'
 
-                if buffer:
-                    yield json.dumps({'message': buffer.strip()}) + '\n'
+                    if buffer:
+                        yield json.dumps({'message': buffer.strip()}) + '\n'
 
 
                 streaming_response = StreamingHttpResponse(chunk_generator(response_chunks), content_type='application/json')
