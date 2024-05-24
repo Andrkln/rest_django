@@ -33,8 +33,7 @@ SECRET_KEY = config('SECRET_KEY')
 IS_HEROKU_APP = "DYNO" in os.environ and not "CI" in os.environ
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if not IS_HEROKU_APP:
-    DEBUG = True
+DEBUG = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -163,6 +162,12 @@ USE_TZ = True
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
+
+CORS_ALLOWED_ORIGINS = [
+    'https://cvsite-pi.vercel.app',
+    'cvsite-pi.vercel.app'
+    'http://cvsite-pi.vercel.app'
+]
 
 
 
