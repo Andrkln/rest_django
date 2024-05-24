@@ -164,12 +164,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 
-CORS_ALLOWED_ORIGINS = [
-    'https://cvsite-pi.vercel.app',
-    'cvsite-pi.vercel.app'
-    'http://cvsite-pi.vercel.app'
-]
-
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -89,8 +89,6 @@ def generate_response(user_question, prev_question=None):
         for chunk in response:
 
             if chunk.choices[0].delta.content is not None:
-
-                print(chunk)
                 
                 yield chunk
 
