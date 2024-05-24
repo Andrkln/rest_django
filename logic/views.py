@@ -39,12 +39,11 @@ class ChatBotView(APIView):
 
                     chat_id_to_send = str(conversation.chat_id)
 
-                    yield json.dumps({'chat_id': chat_id_to_send}) + '\n'
+                    yield json.dumps({'chat_id': chat_id_to_send}) + '|'
 
                     for chunk in response_chunks:
                         chunks += chunk.choices[0].delta.content
-                        message = str(chunk.choices[0].delta.content).replace('\\', '')
-                        rt = json.dumps({'message': message, 'id': chunk.id}) + '\n'
+                        rt = json.dumps({'message': message, 'id': chunk.id}) + '|'
                         yield rt
 
                     reply = [
